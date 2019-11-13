@@ -79,6 +79,7 @@ function parseMetaInformation(content) {
 }
 
 function showVideo() {
+    clearInterval(timeout_id);
     content = content.split('\r\n').join('\n')
     var target = document.getElementById('screen');
     var meta = parseMetaInformation(content);
