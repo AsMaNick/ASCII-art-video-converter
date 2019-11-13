@@ -5,12 +5,16 @@
 <div align="center" id="control_container">
   <input type="range" min="0" max="1" value="0" class="slider" id="slider" onmousedown="sliderMouseDown()" onmouseup="sliderMouseUp()">
   <label id="time">00:00 / 00:00</label>
-  <button onclick="speedDownClick()"><img src="icons/speed_down.png" style="width: 16px"></button>
-  <button onclick="pauseClick()"><img src="icons/pause.png" style="width: 16px" id="pause_img"></button>
-  <button onclick="speedUpClick()"><img src="icons/speed_up.png" style="width: 16px"></button>
+  <button class="player_button" onclick="speedDownClick()"><img src="icons/speed_down.png" style="width: 16px"></button>
+  <button class="player_button" onclick="pauseClick()"><img src="icons/pause.png" style="width: 16px" id="pause_img"></button>
+  <button class="player_button" onclick="speedUpClick()"><img src="icons/speed_up.png" style="width: 16px"></button>
   <label id="speed">x1.00</label>
 </div>
 </div>
 <br>
+<br>
 <input type="file" id="input-file" onchange="loadFile(event)">
+<br>
+<button onclick="loadFromURL()">Загрузить через URL</button>
+<input type="text" size=20 value="https://asmanick.github.io/ASCII-art-video-converter/data/tennis.txt" id="url">
 <script type="text/javascript" src="player.js"> </script>

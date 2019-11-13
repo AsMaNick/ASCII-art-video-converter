@@ -7,7 +7,10 @@ var delay = 1000 / FPS;
 function loadFile(event) {
     var input = event.target;
     if ('files' in input && input.files.length > 0) {
-        showVideo(document.getElementById('screen'), input.files[0])
+        readFileContent(input.files[0]).then(file_content => {
+            content = file_content;
+            showVideo();
+        });
     }
 }
 
@@ -75,22 +78,21 @@ function parseMetaInformation(content) {
     return meta;
 }
 
-function showVideo(target, file) {
-    readFileContent(file).then(file_content => {
-        content = file_content;
-        var meta = parseMetaInformation(content);
-        var h = meta.h, w = meta.w;
-        len = h * (w + 2) + 2;
-        var total_frames = parseInt(content.length / len);
-        slider.min = 0;
-        slider.max = total_frames - 1;
-        slider.value = 0;
-        start_pos = meta.start_pos;
-        current_frame = 0;
-        pause = false;
-        slider_clicked = false;
-        showFrame(target, true);
-    })
+function showVideo() {
+    content = content.split('\r\n').join('\n')
+    var target = document.getElementById('screen');
+    var meta = parseMetaInformation(content);
+    var h = meta.h, w = meta.w;
+    len = h * (w + 1) + 1;
+    var total_frames = parseInt(content.length / len);
+    slider.min = 0;
+    slider.max = total_frames - 1;
+    slider.value = 0;
+    start_pos = meta.start_pos;
+    current_frame = 0;
+    pause = false;
+    slider_clicked = false;
+    showFrame(target, true);
 }
 
 function readFileContent(file) {
@@ -138,4 +140,21 @@ function speedUpClick() {
         current_speed += 1;
     }
     document.getElementById('speed').innerHTML = 'x' + speeds[current_speed].toFixed(2);
+}
+
+function loadFromURL() {
+    var url = document.getElementById("url").value;
+    var request = new XMLHttpRequest();
+    request.open('GET', url, true);
+    request.send(null);
+    request.onreadystatechange = function () {
+        console.log(request);
+        if (request.readyState === 4 && request.status === 200) {
+            var type = request.getResponseHeader('Content-Type');
+            if (type.indexOf("text") !== 1) {
+                content = request.responseText;
+                showVideo();
+            }
+        }
+    }
 }
