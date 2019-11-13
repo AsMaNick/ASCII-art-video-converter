@@ -1,2 +1,2 @@
-python main.py
+python ascii_converter.py
 pause
