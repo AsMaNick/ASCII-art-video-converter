@@ -49,6 +49,8 @@ function showFrame(target, is_first_frame) {
     current_frame += 1;
     if (current_frame < total_frames) {
         timeout_id = setTimeout(function() { showFrame(target, false) }, delay / speeds[current_speed]);
+    } else {
+        current_frame -= 1;
     }
 }
 
