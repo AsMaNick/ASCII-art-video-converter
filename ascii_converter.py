@@ -41,7 +41,7 @@ def get_ASCII_represantation(image, height, width):
 
     Returns
     -------
-    ascii_image : str, length(H * (W + 1))
+    ascii_image : str, length(height * (width + 1))
         rows of ASCII image separated by line ending symbol
     """
     image = image.resize((width, height))
