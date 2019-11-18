@@ -8,18 +8,18 @@ from tqdm import tqdm
 
 def rgb_to_grayscale(image):
     """
-	Converts RGB image to the grayscale format
+    Converts RGB image to the grayscale format
 
-	Parameters
-	----------
-	image : array, shape (H, W, 3)
-		image of size H x W
+    Parameters
+    ----------
+    image : array, shape (H, W, 3)
+        image of size H x W
 
-	Returns
-	-------
-	image : array, shape(H, W)
-		grayscaled image
-	"""
+    Returns
+    -------
+    image : array, shape(H, W)
+        grayscaled image
+    """
     if len(image.shape) == 2: # already grayscaled
         return image
     return np.dot(image, [0.299, 0.587, 0.114])
@@ -27,11 +27,11 @@ def rgb_to_grayscale(image):
     
 def get_ASCII_represantation(image, height, width):
     """
-	Converts image to the ASCII format
+    Converts image to the ASCII format
 
-	Parameters
-	----------
-	image : PIL.Image
+    Parameters
+    ----------
+    image : PIL.Image
 
     height : int
         height of ASCII image
@@ -39,11 +39,11 @@ def get_ASCII_represantation(image, height, width):
     width : int
         width of ASCII image
 
-	Returns
-	-------
-	ascii_image : str, length(H * (W + 1))
-		rows of ASCII image separated by line ending symbol
-	"""
+    Returns
+    -------
+    ascii_image : str, length(H * (W + 1))
+        rows of ASCII image separated by line ending symbol
+    """
     image = image.resize((width, height))
     image = rgb_to_grayscale(np.array(image)).astype(np.uint8)
     characters = ['@', 'B', 'M', 'r', 'i', ':', '.', ' ']
@@ -58,11 +58,11 @@ def get_ASCII_represantation(image, height, width):
 
 def process_image(filename, height, width, to_save_filename):
     """
-	Converts image to the ASCII format and saves it to the file
+    Converts image to the ASCII format and saves it to the file
 
-	Parameters
-	----------
-	filename : str
+    Parameters
+    ----------
+    filename : str
         file name of the image to be converted
 
     height : int
@@ -73,7 +73,7 @@ def process_image(filename, height, width, to_save_filename):
 
     to_save_filename : str
         file name where the result image should be written
-	"""
+    """
     file = open(to_save_filename, 'w')
     image = Image.open(filename)
     ascii_image = get_ASCII_represantation(image, height, width)
@@ -84,11 +84,11 @@ def process_image(filename, height, width, to_save_filename):
     
 def process_video(filename, height, width, to_save_filename):
     """
-	Converts video to the ASCII format and saves it to the file
+    Converts video to the ASCII format and saves it to the file
 
-	Parameters
-	----------
-	filename : str
+    Parameters
+    ----------
+    filename : str
         file name of the video to be converted
 
     height : int
@@ -99,7 +99,7 @@ def process_video(filename, height, width, to_save_filename):
 
     to_save_filename : str
         file name where the result video should be written
-	"""
+    """
     reader = cv2.VideoCapture(filename)
     progress_bar = tqdm()
     file = open(to_save_filename, 'w')
