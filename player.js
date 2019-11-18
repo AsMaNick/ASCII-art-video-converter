@@ -44,6 +44,7 @@ function showFrame(target, is_first_frame) {
     document.getElementById("time").innerHTML = getTimeLabel(frame_id, total_frames);
     if (!slider_clicked) {
         slider.value = frame_id;
+        updateSliderFill();
     }
     target.innerHTML = content.substr(pos, len).split('\n').join('<br>').split(' ').join('&nbsp');
     current_frame += 1;
@@ -91,6 +92,7 @@ function showVideo() {
     slider.min = 0;
     slider.max = total_frames - 1;
     slider.value = 0;
+    updateSliderFill();
     start_pos = meta.start_pos;
     current_frame = 0;
     pause = false;
@@ -160,4 +162,10 @@ function loadFromURL() {
             }
         }
     }
+}
+
+function updateSliderFill() {
+    var slider = document.getElementById('slider');
+    var fill = 100 * slider.value / slider.max;
+    slider.style.background = "linear-gradient(to right, #4CAF50 0%, #4CAF50 " + fill.toString() + "%, #d3d3d3 " + fill.toString() + "%, #d3d3d3 100%)";
 }
