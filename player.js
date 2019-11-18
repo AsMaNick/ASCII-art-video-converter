@@ -14,7 +14,7 @@ function loadFile(event) {
     }
 }
 
-function get_time(t) {
+function getTime(t) {
     var m = parseInt(t / 60);
     var s = t % 60;
     m = m.toString();
@@ -28,10 +28,10 @@ function get_time(t) {
     return m + ":" + s;
 }
 
-function get_time_label(frame_id, total_frames) {
+function getTimeLabel(frame_id, total_frames) {
     var t_total = parseInt(total_frames / FPS);
     var t_cur = parseInt((frame_id + 1) / total_frames * t_total);
-    return get_time(t_cur) + ' / ' + get_time(t_total);
+    return getTime(t_cur) + ' / ' + getTime(t_total);
 }
 
 function showFrame(target, is_first_frame) {
@@ -41,7 +41,7 @@ function showFrame(target, is_first_frame) {
     var pos = start_pos + current_frame * len;
     var frame_id = current_frame;
     var total_frames = parseInt(content.length / len);
-    document.getElementById("time").innerHTML = get_time_label(frame_id, total_frames);
+    document.getElementById("time").innerHTML = getTimeLabel(frame_id, total_frames);
     if (!slider_clicked) {
         slider.value = frame_id;
     }
