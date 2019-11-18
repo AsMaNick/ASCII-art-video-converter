@@ -1,69 +1,118 @@
-from tqdm import tqdm
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.image import imread
-from PIL import Image
-import cv2
-import time
 import os
-import sys
+import cv2
+import numpy as np
+from PIL import Image
+from tqdm import tqdm
 
 
-filter = np.array([[-1, -1, -1],
-                   [-1, 8, -1],
-                   [-1, -1, -1]])
 
+def rgb_to_grayscale(image):
+    """
+	Converts RGB image to the grayscale format
 
-def rgb_to_gray(img):
-    if len(img.shape) == 2:
-        return img
-    return np.dot(img, [0.299, 0.587, 0.114])
+	Parameters
+	----------
+	image : array, shape (H, W, 3)
+		image of size H x W
+
+	Returns
+	-------
+	image : array, shape(H, W)
+		grayscaled image
+	"""
+    if len(image.shape) == 2: # already grayscaled
+        return image
+    return np.dot(image, [0.299, 0.587, 0.114])
     
     
-def get_symbol(pixel):
-    #return [' ', '#'][abs(pixel) > 30]
-    #return [' ', '.', '$', '%', '-', '&', '*', '+'][min(7, abs(pixel) // 16)]
-    return [' ', '.', ':', 'i', 'r', 'M', 'B', '@'][pixel // 32]
-    try:
-        return '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^` '[(255 - pixel) * 67 // 255]
-    except:
-        print((255 - pixel) * 69 // 255)
-        exit((255 - pixel) * 69 // 255)
-    
-    
-def get_str(img, h, w):
-    img = img.resize((w, h))  # resizes image in-place
-    img = rgb_to_gray(np.array(img)).astype(np.uint8) // 32
-    s = ''
-    for row in img:
+def get_ASCII_represantation(image, height, width):
+    """
+	Converts image to the ASCII format
+
+	Parameters
+	----------
+	image : PIL.Image
+
+    height : int
+        height of ASCII image
+        
+    width : int
+        width of ASCII image
+
+	Returns
+	-------
+	ascii_image : str, length(H * (W + 1))
+		rows of ASCII image separated by line ending symbol
+	"""
+    image = image.resize((width, height))
+    image = rgb_to_grayscale(np.array(image)).astype(np.uint8)
+    characters = ['@', 'B', 'M', 'r', 'i', ':', '.', ' ']
+    image //= (256 // len(characters)) # getting ids of characters for each pixel
+    ascii_image = ''
+    for row in image:
         for pixel in row:
-            #s += [' ', '.', ':', 'i', 'r', 'M', 'B', '@'][pixel]
-            s += ['@', 'B', 'M', 'r', 'i', ':', '.', ' '][pixel]
-        s += '\n'
-    return s
+            ascii_image += characters[pixel]
+        ascii_image += '\n'
+    return ascii_image
     
 
-def process_video(filename, h, w):
-    cam = cv2.VideoCapture(filename)
-    tq = tqdm()
-    f = open('res.txt', 'w')
-    print(h, w, file=f)
-    while True:
-        ok, frame = cam.read()
-        if not ok:
-            break
-        frame = Image.fromarray(frame)
-        print(get_str(frame, h, w), file=f)
-        tq.update()        
+def process_image(filename, height, width, to_save_filename):
+    """
+	Converts image to the ASCII format and saves it to the file
+
+	Parameters
+	----------
+	filename : str
+        file name of the image to be converted
+
+    height : int
+        height of ASCII image
         
-        
-def process_image(img, h, w, file):
-    str = get_str(img, h, w)
-    print(h, w, file=file)
-    print(str, file=file)
+    width : int
+        width of ASCII image
+
+    to_save_filename : str
+        file name where the result image should be written
+	"""
+    file = open(to_save_filename, 'w')
+    image = Image.open(filename)
+    ascii_image = get_ASCII_represantation(image, height, width)
+    print(height, width, file=file)
+    print(ascii_image, file=file)
     file.close()
     
     
-#process_image(Image.open('videos/dimitrov.png'), 178, 600, file=open('res600_my.txt', 'w'))
-#process_video('videos/vals.mp4', 178, 600)
-#process_video('videos/dolgopolov.mp4', 178, 600)
+def process_video(filename, height, width, to_save_filename):
+    """
+	Converts video to the ASCII format and saves it to the file
+
+	Parameters
+	----------
+	filename : str
+        file name of the video to be converted
+
+    height : int
+        height of ASCII video
+        
+    width : int
+        width of ASCII video
+
+    to_save_filename : str
+        file name where the result video should be written
+	"""
+    reader = cv2.VideoCapture(filename)
+    progress_bar = tqdm()
+    file = open(to_save_filename, 'w')
+    print(height, width, file=file)
+    while True:
+        read, frame = reader.read()
+        if not read:
+            break
+        frame = Image.fromarray(frame)
+        print(get_ASCII_represantation(frame, height, width), file=file)
+        progress_bar.update()
+    file.close()
+    
+    
+process_image('videos/dimitrov.png', 178, 600, 'image.txt')
+process_video('videos/dolgopolov.mp4', 178, 600, 'video.txt')
