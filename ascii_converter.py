@@ -1,4 +1,5 @@
 import os
+import sys
 import cv2
 import numpy as np
 from PIL import Image
@@ -113,6 +114,34 @@ def process_video(filename, height, width, to_save_filename):
         progress_bar.update()
     file.close()
     
+
+def wrong_parameters_notification():
+    print('''Please, provide 5 parameters: 
+  1) type_process - 'video' or 'image'
+  2) input_file - path to the input video/image
+  3) height - height of the result ASCII-video/image file
+  4) width - width of the result ASCII-video/image file
+  5) output_file - path to the output ASCII-video/image file''')
+    exit()
     
-process_image('videos/dimitrov.png', 178, 600, 'image.txt')
-process_video('videos/dolgopolov.mp4', 178, 600, 'video.txt')
+    
+if len(sys.argv) != 6:
+    wrong_parameters_notification()
+type_process, input_file, height, width, output_file = sys.argv[1:]
+if type_process not in ['video', 'image']:
+    print('Parameter type_process should be \'video\' or \'image\'')
+    exit()
+if not os.path.exists(input_file):
+    print('File \'{}\' doesn\'t exists'.format(input_file))
+    exit()
+try:
+    height = int(height)
+    width = int(width)
+    assert(1 <= height <= 2000 and 1 <= width <= 2000)
+except Exception as e:
+    print('Height and width parameters should be integers from 1 to 2000')
+    exit()
+if type_process == 'image':
+    process_image(input_file, height, width, output_file)
+else:
+    process_video(input_file, height, width, output_file)
